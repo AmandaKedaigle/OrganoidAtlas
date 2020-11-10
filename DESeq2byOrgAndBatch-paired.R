@@ -96,10 +96,16 @@ combineDEpair<-function(seurList,id,condition="CellType",base="Cycling",batch="d
   return(out)
 }
 
-#Load Seurat Objects
+#Load Seurat Objects - if you have multiple individual objects
 seur = readRDS("v3wt.DorsalKadoshima.HUES66_3mon.seur.rds")
 seur2 = readRDS("v3wt.DorsalKadoshima.GM_3mon.seur.rds")
 seurList = c(seur, seur2)
+
+#Alternative to above - if you have one object and want to split it on a metadata column into a seurList
+#change "dataset" in two lines below to the name of the column you want to split on!
+seur = readRDS("3mo_harmonizedObj_102820.rds")
+levels = levels(factor(seur$dataset)) #gets a list of all datasets in the object
+seurList = lapply(levels, function(x) subset(seur, subset=dataset==x))
 
 #Set condition to the metadata column you want DEGs between, and base to the "wildtype" or base level of that column
 #Make sure all of the seurat objects you are using have metadata columns using the same name for this metadata column and values
