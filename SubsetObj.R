@@ -19,6 +19,10 @@ neurons$CPNAnalysis [neurons$CPNAnalysis=="CFuPN"] = "Other"
 Idents(neurons) <- "CPNAnalysis"
 DimPlot(neurons)
 
+## find markers
+markers_neurons_CPN <- FindMarkers(neurons, ident.1 = 'CPN', ident.2 = 'Other', min.pct = 0.25, only.pos = F) 
+write.csv(markers_neurons_CPN, file = "markers_neurons_CPN.csv")
+
 ##Compare CFuPN to the rest
 
 neurons@meta.data$CFuPNAnalysis <- neurons@meta.data$FinalName # create a column like the one already generated without modifying the original
@@ -28,6 +32,10 @@ neurons$CFuPNAnalysis [neurons$CFuPNAnalysis=="PN"] = "Other"
 Idents(neurons) <- "CFuPNAnalysis"
 DimPlot(neurons)
 
+## find markers
+markers_neurons_CFuPN <- FindMarkers(neurons, ident.1 = "CFuPN", ident.2 = "Other", min.pct = 0.25, only.pos = F) 
+write.csv(markers_neurons_CFuPN, file = "markers_neurons_CFuPN.csv")
+
 ##Compare PN to the rest 
 
 neurons@meta.data$PNAnalysis <- neurons@meta.data$FinalName # create a column like the one already generated without modifying the original
@@ -36,6 +44,10 @@ neurons$PNAnalysis [neurons$PNAnalysis=="CPN"] = "Other"
 neurons$PNAnalysis [neurons$PNAnalysis=="CFuPN"] = "Other"
 Idents(neurons) <- "PNAnalysis"
 DimPlot(neurons)
+
+## find markers
+markers_neurons_PN <- FindMarkers(neurons, ident.1 = "PN", ident.2 = "Other", min.pct = 0.25, only.pos = F) 
+write.csv(markers_neurons_PN, file = "markers_neurons_PN.csv")
 
 #save the neurons object with the new columns
 saveRDS(neurons, file = "neurons.rds")
@@ -59,6 +71,10 @@ progs$aRGAnalysis [progs$aRGAnalysis=="oRG"] = "Other"
 Idents(progs) <- "aRGAnalysis"
 DimPlot(progs)
 
+## find markers
+markers_progs_aRG <- FindMarkers(progs, ident.1 = 'aRG', ident.2 = 'Other', min.pct = 0.25, only.pos = F) 
+write.csv(markers_progs_aRG, file = "markers_progs_aRG.csv")
+
 #Compare IP to the rest
 
 progs@meta.data$IPAnalysis <- progs@meta.data$FinalName # create a column like the one already generated without modifying the original
@@ -68,6 +84,10 @@ progs$IPAnalysis [progs$IPAnalysis=="oRG"] = "Other"
 Idents(progs) <- "IPAnalysis"
 DimPlot(progs)
 
+## find markers
+markers_progs_IP <- FindMarkers(progs, ident.1 = 'IP', ident.2 = 'Other', min.pct = 0.25, only.pos = F) 
+write.csv(markers_progs_IP, file = "markers_progs_IP.csv")
+
 #Compare oRG to the rest
 
 progs@meta.data$oRGAnalysis <- progs@meta.data$FinalName # create a column like the one already generated without modifying the original
@@ -76,6 +96,10 @@ progs$oRGAnalysis [progs$oRGAnalysis=="aRG"] = "Other"
 progs$oRGAnalysis [progs$oRGAnalysis=="IP"] = "Other"
 Idents(progs) <- "oRGAnalysis"
 DimPlot(progs)
+
+## find markers
+markers_progs_oRG <- FindMarkers(progs, ident.1 = 'oRG', ident.2 = 'Other', min.pct = 0.25, only.pos = F) 
+write.csv(markers_progs_oRG, file = "markers_progs_oRG.csv")
 
 #save the progenitors object with the new columns
 saveRDS(progs, file = "progs.rds")
