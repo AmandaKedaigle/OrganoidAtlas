@@ -1,4 +1,4 @@
-##complex heatmap from DESeq2 excels
+#complex heatmap from DESeq2 excels
 
 library(ComplexHeatmap)
 library(readxl)
