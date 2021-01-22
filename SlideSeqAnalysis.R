@@ -132,6 +132,7 @@ marker_data_de = get_marker_data(cell_type_info_restr[[2]], cell_type_info_restr
 saveRDS(marker_data_de, '201210_marker_data_de_standard.RDS')
 write.csv(marker_data_de, "201210_markergene.csv")
 
+#Plot annotated cell types
 results_df <- results$results_df
 weights_doublet <- results$weights_doublet
 marker_data_de <- readRDS('201210_marker_data_de_standard.RDS')
@@ -228,5 +229,38 @@ for (ct in colnames(weights)) {
   print(plot_puck_continuous(puck, colnames(puck@counts), weights[,ct], ylimit = c(0,quantile(weights[,ct], probs = 0.95)), xlim = c(2100, 4200)) +
           theme_void() + scale_color_gradient2(low="white", mid="powderblue", high="darkblue", midpoint=quantile(weights[,ct], probs = 0.3)) + ggtitle(ct))
 }
+dev.off()
+
+#weights bar chart
+results_df <- myRCTD@results$results_df
+puck = myRCTD@spatialRNA
+weights = myRCTD@results$weights
+barcodes = rownames(results_df[results_df$spot_class != "reject" & puck@nUMI >= 100,])
+weights = weights[barcodes,]
+assigns = results_df[barcodes,]$first_type
+celltypes = colnames(weights)
+cols = c('#8dd3c7','#bebada', '#fb9a99', '#08519C', '#a6d854', '#fccde5',
+         '#c6dbef', '#c7e9c0', '#bf812d', '#dfc27d',
+         '#f6e8c3', '#8c510a', '#67000d','#a50f15',
+         '#fff7bc','#fee391','#A1D99B', '#D9F0A3','#fcbba1','#80b1d3', '#fdb462',
+         '#02818a', '#dd3497','#fa9fb5','#d9d9d9', "#1D91C0", "#EC7014")
+levels = c('aRG', 'IP', 'Newborn PN', 'Newborn DL PN', 'Cajal Retzius', 'Cortical hem', 
+           'Preplate/Subplate', 'FOXG1- EMX1- neurons', 'Subcortical progenitors', 'Subcortical neurons',
+           'Subcortical neuronal precursors', 'Subcortical interneurons','Neural crest','Neural placode', 
+           'oRG','oRG II','oRG/Astroglia', 'Astroglia', 'PN', 'CFuPN', 'CPN',
+           'Glial precursors', 'IN progenitors','Immature IN','Unknown', "Newborn CFuPN", "Newborn CPN")
+cols = cols[match(celltypes,levels)]
+p = list()
+for (ct in celltypes) {
+  weightsub = as.matrix(weights[assigns==ct,])
+  summary = data.frame("CellType" = colnames(weightsub), "mean" = colMeans(weightsub), sd = apply(weightsub, 2, sd))
+  p[[ct]] = ggplot(summary, aes(x=CellType, y = mean, fill=CellType)) +
+    geom_bar(stat="identity", color="black") +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2) +
+    scale_fill_manual(values=cols) +
+    theme_classic() + NoLegend() + labs(x="", y="", title=paste0("Annotated ", ct))
+}
+pdf("1ms1-weightsDist.pdf", height=3*3, width=3*3.5)
+wrap_plots(p)
 dev.off()
 
