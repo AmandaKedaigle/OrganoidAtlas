@@ -10,34 +10,26 @@ rm_files = list.files(path = "../HumanToOrg/", recursive = T, full.names = T, pa
 rm_timepts = substr(sapply(strsplit(rm_files, "/"), "[", 4), 1,2)
 rm_pathways = substr(sapply(strsplit(rm_files, "/"), "[", 4), 4,100000)
 
-length = length(bg_files)  
-t_whole = data.frame(Var1 = rep(NA, length),Var2 = rep(NA, length),value = rep(NA, length), variable = rep(NA, length),timept = rep(NA, length),
-                     pathway = rep(NA, length),FullFreq = rep(NA, length),diff = rep(NA, length),p = rep(NA, length),padj = rep(NA, length))
-wholecount = 1
+t_whole = data.frame()
 
 for (timept in c("1m", "3m","6m")) {
   
-  length = sum(bg_timepts==timept) * 48
-  t = data.frame(Var1 = rep(NA, length),Var2 = rep(NA, length),value = rep(NA, length),variable = rep(NA, length),
-                 timept = rep(NA, length),pathway = rep(NA, length),FullFreq = rep(NA, length),diff = rep(NA, length),p = rep(NA, length))
+  trm1 = readRDS(rm_files[rm_timepts==timept][1])
+  nr = nrow(trm1)
+  length = sum(rm_timepts==timept) * nr
+  t = data.frame(Var1=rep(NA, length),Var2=rep(NA, length),value=rep(NA, length),variable=rep(NA, length),timept=rep(NA, length),
+                 pathway=rep(NA, length),FullFreq=rep(NA, length),diff=rep(NA, length), numLarger=rep(NA, length), numLargerEq=rep(NA,length), p=rep(NA, length))
   tcount = 1
   
   for (pathway in levels(factor(bg_pathways))) {
   
     bgSub = bg_files[bg_timepts==timept & bg_pathways==pathway]
-    if (length(bgSub) < 3000) print(paste0(timept," ",pathway," ", length(bgSub), "< 3,000!"))
-    length = length(bgSub) * 48
+    if (length(bgSub) < 5000) print(paste0(timept," ",pathway," ", length(bgSub), "< 5,000!"))
+    bgSub = bgSub[1:5000]
+    length = length(bgSub) * nr
     bgdist = data.frame(Var1 = rep(NA, length),Var2 = rep(NA, length),variable = rep(NA, length),value = rep(NA, length),
                         FullFreq = rep(NA, length),diff = rep(NA, length))
     t_full = readRDS(full_files[full_timepts==timept])
-    jcount = 1
-    for (j in 1:length(bgSub)) {
-      tBG = readRDS(bgSub[j])
-      tBG$FullFreq = t_full$value
-      tBG$diff = tBG$value - tBG$FullFreq
-      bgdist[jcount:(jcount+47),] =  tBG
-      jcount = jcount + 48
-    }
   
     rmfile = rm_files[rm_timepts==timept & rm_pathways==pathway]
     if (length(rmfile)!=1) print(paste0(timept," ",pathway," ", length(rmfile), "Not one RM'd file!"))
@@ -47,22 +39,33 @@ for (timept in c("1m", "3m","6m")) {
   
     t1$FullFreq = t_full$value
     t1$diff = t1$value - t1$FullFreq
-  
-    t1$p = NA
-    for (k in 1:nrow(t1)) {
-      tBGsub = bgdist[bgdist$Var1 == t1$Var1[k] & bgdist$Var2 == t1$Var2[k],]
-      t1$p[k] = 1 - (sum(tBGsub$diff < t1$diff[k])/length(bgSub))
+    t1$numLarger = 0
+    t1$numLargerEq = 0
+    
+    for (j in 2:length(bgSub)) {
+      tBG = readRDS(bgSub[j])
+      tBG$FullFreq = t_full$value
+      tBG$diff = tBG$value - tBG$FullFreq
+      if (sum(tBG$Var1!=t1$Var1)>0 | sum(tBG$Var2!=t1$Var2)>0) {print("ERROR with tBG and t1 not matching")}
+      t1[tBG$diff > t1$diff,"numLarger"] = t1$numLarger[tBG$diff > t1$diff] + 1
+      t1[tBG$diff >= t1$diff,"numLargerEq"] = t1$numLargerEq[tBG$diff >= t1$diff] + 1
     }
+    
+    t1$p = t1$numLargerEq/length(bgSub)
+    t1[,1] = as.character(t1[,1])
+    t1[,2] = as.character(t1[,2])
+    t1[,3] = as.character(t1[,3])
   
-    t[tcount:(tcount+47),] = t1
-    tcount = tcount+48
+    t[tcount:(tcount+(nr-1)),] = t1
+    tcount = tcount+nr
   }
   t$padj = p.adjust(t$p, method="BY")
-  t_whole[wholecount:(wholecount+nrow(t)-1)] = t
-  wholecount = wholecount+nrow(t)
-  
+  #saveRDS(t, paste0("t_", timept, "-5k.rds"))
+  #t_whole[wholecount:(wholecount+nrow(t)-1)] = t
+  #wholecount = wholecount+nrow(t)
+  t_whole = rbind(t_whole, t)
 }
-saveRDS(t_whole, "t_whole.rds")
+saveRDS(t_whole, "t_whole-5.5k.rds")
 
 ggplot(t_whole, aes(pathway, -1*log(padj))) +
   geom_point(aes(color= Var1)) +
@@ -70,7 +73,7 @@ ggplot(t_whole, aes(pathway, -1*log(padj))) +
   geom_hline(yintercept = -1*log(0.05), linetype="dotted") +
   theme(axis.text.x = element_text(angle=90, hjust=1)) + 
   labs(color = "Human Cell", main = "Organoid Type Assigment")
-ggsave("AllPathwaySignificance.pdf", units="in", width=65, height=12, limitsize = F)
+ggsave("AllPathwaySignificance-5kruns.pdf", units="in", width=65, height=12, limitsize = F)
 
 ggplot(t_whole[t_whole$Var2 %in% c("aRG", "PN") & t_whole$timept=="3m",], aes(pathway, Var1)) +
   geom_tile(aes(fill= padj)) +
@@ -79,10 +82,10 @@ ggplot(t_whole[t_whole$Var2 %in% c("aRG", "PN") & t_whole$timept=="3m",], aes(pa
   theme(axis.text.x = element_text(angle=90, hjust=1)) +
   facet_grid(Var2~.) +
   labs(x="", y="Human Cell Type", main="Cells changing to being classified as aRG")
-ggsave("CellsChangingToaRGandPN-3m.pdf", units="in", width=10, height=10) 
+ggsave("CellsChangingToaRGandPN-3m-5kruns.pdf", units="in", width=10, height=10) 
 
-pdf(paste0("glycolysis_in_6m.pdf"), width=7.3, height=3.5, useDingbats=F)
-ggplot(t_whole[t_whole$pathway=="HALLMARK_GLYCOLYSIS" & t_whole$timept=="6m",], aes(Var1, Var2)) + 
+pdf(paste0("hypoxia_in_3m-5kruns.pdf"), width=7.3, height=3.5, useDingbats=F)
+ggplot(t_whole[t_whole$pathway=="HALLMARK_HYPOXIA" & t_whole$timept=="3m",], aes(Var1, Var2)) + 
   geom_point(aes(size = padj, fill = diff, color=padj<0.05), pch=21, stroke=0.7) + theme_bw() +
   xlab("Human Cell Types") + 
   ylab("Organoid Cell Types") + 
@@ -95,6 +98,6 @@ dev.off()
 head(t_whole)
 
 colnames(t_whole) = c("Human Fetal Cell Type", "Organoid Label", "var", "Frequency", "Timepoint", "Pathway Genes Removed",
-                      "Frequency in Full Model", "Difference", "p", "padj")
+                      "Frequency in Full Model", "Difference", "Number of BG with Larger Diff", "Number of BG Larger or Equal Diff","p", "padj")
 t_whole = t_whole[,-3]
-write_xlsx(t_whole, "RFAllPathwayPvalues.xlsx")
+write_xlsx(t_whole, "RFAllPathwayPvalues-5kruns.xlsx")
