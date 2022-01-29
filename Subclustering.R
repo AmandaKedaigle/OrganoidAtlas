@@ -71,3 +71,5 @@ DimPlot(obj, group.by = "NewColumn") #plot to verify the identities have been ch
 #For the PGP1 b9 6 months data set, cluster 13 was further subclustered (resolution=0.1), resulting in oRG and IN progenitors. Cluster 14 was further subclustered (resolution=0.2), resulting in oRG and IN progenitors. 
 #For the PGP1 b14 6 months dataset, cluster 1 was further subclustered (resolution=0.2), resulting in oRG and IN progenitors. Cluster 5 was further subclustered (resolution=0.2), resulting in Glial precursors and Immature IN. 
 
+#For the SHARE-seq RNA data, each time point was isolated and subclustered with resolution=1.0, except day_59, where resolution=1.8
+#For day_90, clusters 7, 8, 9, were isolated and further subclustered (resolution=1.0), resulting in aRG and IP.
