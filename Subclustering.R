@@ -83,3 +83,5 @@ DimPlot(obj, group.by = "NewColumn") #plot to verify the identities have been ch
 #Fetal data
 #Cluster 0 was further subclustered (resolution=0.2), resulting in IP and CPN. Cluster 22 was further subclustered (resolution=0.1), resulting in IN progenitors and Migrating IN. Clusters 11, 13 and 30 were subclustered together (resolution=0.2), resulting in aRG and oRG.
 
+#For the SHARE-seq RNA data, each time point was isolated and subclustered with resolution=1.0, except day_59, where resolution=1.8
+#For day_90, clusters 7, 8, 9, were isolated and further subclustered (resolution=1.0), resulting in aRG and IP.
