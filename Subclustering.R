@@ -13,10 +13,10 @@ print(ElbowPlot(obj1))
 
 obj1 = RunPCA(obj1,features = VariableFeatures(obj1))
 print(ElbowPlot(obj1))
-obj1 = FindNeighbors(obj1, dims=c(1:20)) 
+obj1 = FindNeighbors(obj1, dims=c(1:20)) #15 or 20
 obj1 = FindClusters(obj1, resolution=c(1,0.5, 0.2, 0.1))
-obj1 <- RunTSNE(object = obj1, dims = c(1:20)) 
-obj1 <- RunUMAP(obj1, dims = 1:20)
+obj1 <- RunTSNE(object = obj1, dims = c(1:20)) #15 or 20
+obj1 <- RunUMAP(obj1, dims = 1:20) #15 or 20
 
 ## Make some plots to decide resolution
 DimPlot(obj1, group.by = c("RNA_snn_res.1", "RNA_snn_res.0.5", "RNA_snn_res.0.2", "RNA_snn_res.0.1"), label = T)
@@ -49,25 +49,39 @@ DimPlot(obj, group.by = "NewColumn") #plot to verify the identities have been ch
 
 ## Subclustering information Kedaigle, Uzquiano et al.
 
+#Dorsal organoids
 #For the Mito 210 c1 b1 23 days data set, clusters 16, 6, and 4 were further subclustered (resolution=0.5), resulting in Preplate/Subplate cells and FOXG1- EMX1- neurons. 
+#For the PGP1 c1 bx 23 days data set, cluster 10 was further subclustered (resolution=0.2), resulting in Preplate/Subplate and FOXG1-EMX1- neurons. Cluster 11 was further subclustered (resolution=0.5), resulting in Subcortical neuronal precursors, Subcortical neurons, Subcortical interneurons. 
 #For the GM08330 b2 1 month data set, cluster 10 was further subclustered (resolution=0.5), resulting in Subcortical neurons and Cajal Retzius cells. 
 #For the Mito 210 c1 b3 1 month data set, no subclustering. 
 #For the Mito 210 c1 b4 1 month data set, cluster 10 was further subclustered (resolution=0.1), resulting in Newborn PN and Subcortical neurons. 
 #For the Mito 210 c1 b5 1 month data set, cluster 6 was further subclustered (resolution=0.2), resulting in Subcortical neurons and Cajal Retzius cells. 
+#For the Mito 210 c1 bx 1.5 months data set, cluster 10 was further subclustered (resolution=0.2), resulting in Newborn PN and Newborn DL PN. Cluster 12 was further subclustered (resolution=0.5) resulting in Subcortical neurons and Cajal Retzius. 
+#For the PGP1 c1 bx 1.5 months data set, cluster 7 was further subclustered (resolution=0.2), resulting in Newborn PN and Newborn DL PN. Cluster 8 was further subclustered (resolution=0.2), resulting in IP and Newborn PN.
 #For the Mito 210 c1 b1 2 months data set, cluster 1 was further subclustered (resolution=0.5), resulting in aRG and oRG. Cluster 5 was further subclustered (resolution=0.2), resulting in Newborn CPN and CFuPN. Cluster 6 was further subclustered (resolution=0.2), resulting in aRG and unspecified PN. Cluster 16 was further subclustered (resolution=0.1), resulting in oRG and IP. 
+#For the PGP1 c1 bx 2 months data set, cluster 0 was further subclustered (resolution=0.5), resulting in aRG and oRG. Cluster 1 was further subclustered (resolution=0.5), resulting in CFuPN and Newborn CPN. Cluster 4 was further subclustered (resolution=0.2), resulting in CFuPN and unspecified PN. Cluster 5 was further subclustered (resolution=0.1), resulting in Cortical hem and aRG. Cluster 6 was further subclustered (resolution=0.5), resulting in IP and unspecified PN. Cluster 12 was further subclustered (resolution=0.1), resulting in IP and oRG. 
 #For the GM08330 b2 3 months data set, cluster 6 was further subclustered (resolution=0.1), resulting in oRG and IP. Cluster 8 was further subclustered (resolution=0.2), resulting in aRG, oRG and unspecified PN. #For the Mito 210 c1 b6 3 months data set, cluster 14 was further subclustered (resolution=0.2), resulting in aRG and oRG.
 #For the Mito 210 c2 b5 3 months data set, cluster 6 was further subclustered (resolution=0.2), resulting in aRG and oRG. Cluster 9 was further subclustered (resolution=0.1), resulting in oRG and IP. Cluster 16 was further subclustered (resolution=0.5), resulting in aRG and oRG. 
 #For the HUES66 b7 3 months data set, cluster 7 was further subclustered (resolution=0.2), resulting in oRG and IP. Cluster 12 was further subclustered (resolution=0.2), resulting in aRG and oRG. Cluster 16 was further subclustered (resolution=0.1), resulting in aRG and oRG. 
 #For the HUES66 b8 3 months data set, cluster 9 was further subclustered (resolution=0.2), resulting in oRG and IP. Cluster 16 was further subclustered (resolution=0.2), resulting in aRG and oRG. 
-#For the PGP1 b9 3 months data set, cluster 10 was further subclustered (resolution=0.1), resulting in oRG and IP. Cluster 13 was further subclustered (resolution=0.5), resulting in aRG and oRG.
-#For the PGP1 b10 3 months data set, cluster 8 was further subclustered (resolution=0.2), resulting in oRG and IP. Cluster 11 was further subclustered (resolution=0.2), resulting in aRG and oRG. 
+#For the PGP1 c2 b9 3 months data set, cluster 10 was further subclustered (resolution=0.1), resulting in oRG and IP. Cluster 13 was further subclustered (resolution=0.5), resulting in aRG and oRG.
+#For the PGP1 c2 b10 3 months data set, cluster 8 was further subclustered (resolution=0.2), resulting in oRG and IP. Cluster 11 was further subclustered (resolution=0.2), resulting in aRG and oRG. 
 #For the Mito 210 c1 b1 4 months data set, cluster 3 was further subclustered (resolution=0.5), resulting in Unspecified PN and CPN. Cluster 12 was further subclustered (resolution=0.1), resulting in IP and oRG. Cluster 13 was further subclustered (resolution=0.5), resulting in IP and oRG.
+#For the PGP1 c1 bx 4 months data set, cluster 3 was further subclustered (resolution=0.5), resulting in unspecified PN and CPN. Cluster 12 and 17 were further subclustered (resolution=0.2), resulting in IP and oRG.
 #For the Mito 210 c1 b1 5 months data set, cluster 5 was further subclustered (resolution=0.5), resulting in IP, oRG and IN progenitors. Cluster 7 was further subclustered (resolution=0.5), resulting in IP, oRG, Immature IN and Glial precursors. Cluster 18 was further subclustered (resolution=0.5), resulting in IP and oRG.
+#For the PGP1 c1 bx 5 months data set, cluster 6 was further subclusted (resolution=0.2), resulting in IP, oRG and Glial precursors. Cluster 10 was further subclustered (resolution=0.5), resulting in oRG, Glial precursors and Immature IN. Cluster 12 was further subclustered (resolution=0.2), resulting in aRG and oRG. Cluster 15 was further subclustered (resolution=0.2),resulting in oRG/Astroglia and unspecified PN.
 #For the 11a b11 6 months data set, cluster 3 was further subclustered (resolution=0.2), resulting in oRG and IN progenitors. Cluster 11 was further subclustered (resolution=0.2), resulting in oRG and IN progenitors.
 #For the GM08330 b12 6 months data set, cluster 6 was further subclustered (resolution=0.2), resulting in oRG and IN progenitors. Cluster 9 was further subclustered (resolution=0.2), resulting oRG and IN progenitors. Cluster 11 was further subclustered (resolution=0.5), resulting in Glial precursors and Immature IN. 
 #For the Mito 210 c1 b3 6 months data set, cluster 5 was further subclustered (resolution=0.1), resulting in oRG and IN progenitors. 
 #For the Mito 210 c2 b13 6 months data set, cluster 1 was further subclustered (resolution=0.2), resulting in oRG and IP. Cluster 4 was further subclustered (resolution=0.1), resulting in oRG and IN progenitors. Cluster 13 was further subclustered (resolution=0.5), resulting in IN and CPN. 
 #For the HUES66 b8 6 months data set, cluster 4 was further subclustered (resolution=0.1), resulting in oRG and IN progenitors. Cluster 8 was further subclustered (resolution=0.2), resulting in aRG and Immature IN. Cluster 11 was further subclustered (resolution=0.1), resulting in oRG and IN progenitors. 
-#For the PGP1 b9 6 months data set, cluster 13 was further subclustered (resolution=0.1), resulting in oRG and IN progenitors. Cluster 14 was further subclustered (resolution=0.2), resulting in oRG and IN progenitors. 
-#For the PGP1 b14 6 months dataset, cluster 1 was further subclustered (resolution=0.2), resulting in oRG and IN progenitors. Cluster 5 was further subclustered (resolution=0.2), resulting in Glial precursors and Immature IN. 
+#For the PGP1 c2 b9 6 months data set, cluster 13 was further subclustered (resolution=0.1), resulting in oRG and IN progenitors. Cluster 14 was further subclustered (resolution=0.2), resulting in oRG and IN progenitors. 
+#For the PGP1 c2 b14 6 months dataset, cluster 1 was further subclustered (resolution=0.2), resulting in oRG and IN progenitors. Cluster 5 was further subclustered (resolution=0.2), resulting in Glial precursors and Immature IN. 
+
+#Whole brain organods
+#For the GM08330 3 months data set, cluster 7 was further subclustered (resolution=0.1), resulting in RG and IP.
+#For the HUES66 3 months data set, cluster 7 was further subclustered (resolution=0.2), resulting in RG and IP. Cluster 10 was further subclustered (resolution=0.1), resulting in retinal ganglion cells and amacrine cells. 
+
+#Fetal data
+#Cluster 0 was further subclustered (resolution=0.2), resulting in IP and CPN. Cluster 22 was further subclustered (resolution=0.1), resulting in IN progenitors and Migrating IN. Clusters 11, 13 and 30 were subclustered together (resolution=0.2), resulting in aRG and oRG.
 
