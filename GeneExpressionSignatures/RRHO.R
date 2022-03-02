@@ -12,7 +12,6 @@ library(stats)
 #is its value on which to sort. For differential gene expression, values are often
 #-log10(P-value) * sign(effect)
 
-ps = data.frame()
 for (of in list.files(path = "DESeq-organoids-1mo/")) {
   for (hf in list.files(path = "DESeq-Geschwind//")) {
     on = strsplit(of, ".", fixed=T)[[1]][[1]]
@@ -36,28 +35,9 @@ for (of in list.files(path = "DESeq-organoids-1mo/")) {
     RRHO2_heatmap(RRHO2_obj)
     dev.off()
     
-    #find the border of lower left quadrant
-    row = which.min(!is.na(RRHO2_obj$hypermat[,1]))-1
-    col = which.min(!is.na(RRHO2_obj$hypermat[1,]))-1
-    quad = RRHO2_obj$hypermat[1:row, 1:col]
-    avg = mean(quad)
-    normavg = avg/mean(RRHO2_obj$hypermat, na.rm=T)
-    pR = data.frame("OrgType" = on, "HumanType" = hn, "avgp" = avg, "normavg" = normavg)
-    ps = rbind(ps, pR)
     }
 }
 
-#Plot normalized maximum up-up pvalue for each comparison
-psC = ps
-ps$OrgType = factor(ps$OrgType, levels = c("Subcortical progenitors", "Subcortical neurons", "Cortical hem", "aRG", "oRG", "IP", "Newborn PN", "Newborn DL PN", "Cajal Retzius"))
-ps$HumanType = factor(ps$HumanType, levels = c("vRG", "oRG", "IP","ExN", "ExM", "ExM-U", "ExDp", "InCGE", "InMGE", "OPC"))
-ggplot(ps, aes(OrgType, HumanType, fill=normavg)) +
-  geom_tile(color="white", size=3) +
-  scale_fill_gradient2(low="navy", mid="yellow", high="red3", midpoint=1.55) +
-  theme(axis.text.x = element_text(angle=90, vjust=0.5, hjust=1))
-ggsave("RRHO2-1m/normalizedAvg-uu-pval-allComparisons.pdf", width=5, height=6.1)
-
-saveRDS(ps, "RRHO2-1m/normalizedAvg-uu-pvals.rds")
 
 #Explore gene list differences...this is to look at the genes changed in one v the other
 uu = RRHO2_obj$genelist_uu #up in both - 1 is up in org, 2 is up in human, 3 is both
