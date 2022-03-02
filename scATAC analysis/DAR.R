@@ -4,12 +4,11 @@ library(Signac)
 library(GenomeInfoDb)
 library(EnsDb.Hsapiens.v86)
 
-#args <- c("SUV3_SharedFeatures.RDS", "DARS_SUV3", "aRG")
 args <- commandArgs(trailingOnly=TRUE)
 
 seur <- readRDS(args[1])
-DefaultAssay(seur) <- "ATAC"
-Idents(seur) <- seur$CellSubType
+DefaultAssay(seur) <- "peaks"
+Idents(seur) <- seur$CellType
 
 annotations <- GetGRangesFromEnsDb(ensdb = EnsDb.Hsapiens.v86)
 seqlevels(annotations) <- paste0("chr", seqlevels(annotations))
